@@ -47,13 +47,40 @@ if callfunc == "initialize":
   MODULE_BIND_CACHE = {}
 
 
-  # These are the functions in the "stock" repy API,
-  STOCK_API = set(['createlock', 'createthread', 'createvirtualnamespace', 
-      'dy_dispatch_module', 'dy_import_module', 'dy_import_module_symbols', 
-      'exitall', 'gethostbyname', 'getlasterror', 'getmyip', 'getresources', 
-      'getruntime', 'getthreadname', 'listenforconnection', 
-      'listenformessage', 'listfiles', 'log', 'openconnection', 'openfile', 
-      'randombytes', 'removefile', 'sendmessage', 'sleep'])
+  # Create the `STOCK_API`, i.e. a set of API call names in our 
+  # `_context`. We use this set (plus functions that we define in this 
+  # module) later on to decide which function names should be imported 
+  # from a module. We do not allow libraries to override API-defined 
+  # names currently.
+
+  STOCK_API = set()
+
+  # In `_context`, all Repy API calls are of type `instancemethod` 
+  # (not `function` as you might expect), because `namespace.py` wraps 
+  # all functions to `NamespaceAPIFunctionWrapper.wrapped_function`s 
+  # (which are methods of object instances).
+  #
+  # We cannot `import types` here, so we use JunkClass below to generate 
+  # the required type object for later comparison. 
+  class JunkClass():
+    def junk_method():
+      pass
+
+  junk_instance = JunkClass()
+
+  # This is our comparison type
+  type_instancemethod = type(junk_instance.junk_method)
+
+  # Consider everything in our `_context` of type `instancemethod` 
+  # to be part of the stock API.
+  for call_name, call_function in _context.items():
+    if type(call_function) is type_instancemethod:
+      STOCK_API.add(call_name)
+
+  # Also add (and by this protect against overrides) all the functions 
+  # that this module exposes.
+  STOCK_API.update(['dy_dispatch_module', 'dy_import_module', 
+      'dy_import_module_symbols'])
 
 
   # This is the maximum number of bytes we will try to read in for a file.
