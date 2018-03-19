@@ -1,0 +1,27 @@
+"""
+Test math.r2py's `atan` (arc tangent) function.
+"""
+#pragma repy restrictions.default dylink.r2py
+
+math = dy_import_module("math.r2py")
+
+# This is how accurate the results must be for the tests to pass.
+epsilon = 1e-14
+
+
+def log_if_not_within_epsilon(test, arg, result1, result2, epsilon=epsilon):
+  """Helper function to log details if the expected and actual results
+  differ by more than epsilon for a test."""
+  if abs(result1-result2) > epsilon:
+    log("Wrong", test, "result for argument", arg, "-- is", result1,
+        "should be", result2, "\n")
+
+
+# The atan of the tan of an argument should be the argument again,
+# and the other way around. Also check symmetry, atan(x) = -atan(x)
+for x in range(-100, 100):
+  x /= 100.
+  log_if_not_within_epsilon("atan-of-tan", x, math.atan(math.tan(x)), x)
+  log_if_not_within_epsilon("tan-of-atan", x, math.tan(math.atan(x)), x)
+  log_if_not_within_epsilon("minus atan", -x, math.atan(-x), -math.atan(x))
+

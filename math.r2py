@@ -192,3 +192,53 @@ sin = _get_real_from_cmath_with_wrapped_arg(cmath.sin)
 cos = _get_real_from_cmath_with_wrapped_arg(cmath.cos)
 tan = _get_real_from_cmath_with_wrapped_arg(cmath.tan)
 
+
+
+def atan(x):
+  """
+  <Purpose>
+    Return the arc tangent, measured in radians, of the argument.
+
+  <Argument>
+    A float or int for which to find the arc tangent.
+
+  <Exceptions>
+    TypeError for non-numeric or complex arguments, see Python's math/cmath.
+
+  <Returns>
+    A float.
+
+  <Note>
+    The atan is calculated using a continued fraction:
+    atan(x) = x / (1 + ((1*x)**2 / (3 + ((2*x)**2 / (5 + (3*x)**2 / (7 + (4*...
+    To reduce the magnitude of arguments x handled, we pre-normalize the
+    argument into (-1, 1). Normalization makes a final doubling of the
+    result necessary.
+    See Wikipedia for details:
+      https://en.wikipedia.org/wiki/Inverse_trigonometric_functions
+  """
+  # Sum up this many iterations of the continued fraction expression.
+  # Twelve steps suffice for an accuracy of 1e-14.
+  STEPS = 12
+
+  x = _noncomplex_numeric(x)
+
+  # Wrap argument into (-1, 1). x already in this range get yet closer to 0.
+  x = x/(1+(1+x**2)**0.5)
+
+  # Cache x squared, we need it a lot
+  xx = x**2
+
+  # Initialize denominator to the last piece of the continued fraction,
+  # ensure float.
+  denominator = 2*STEPS + 1.0
+
+  # Calculate the denominator of the continued fraction
+  for n in range(STEPS, 0, -1):
+    denominator = (2*n-1) + xx * n**2 / denominator
+
+  # Bring in the numerator, double to adjust for the normalization step
+  result = 2 * x / denominator
+
+  return result
+
