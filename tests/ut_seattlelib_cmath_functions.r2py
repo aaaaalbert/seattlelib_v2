@@ -1,0 +1,21 @@
+"""
+Test RepyV2's `cmath`'s functions
+"""
+#repy restrictions.default dylink.r2py
+
+cmath = dy_import_module("cmath.r2py")
+
+# A list of test arguments small and large, real and complex, etc.
+testargs = [
+    0, 1, cmath.pi/2, cmath.pi, 2*cmath.pi,
+    0.5j*cmath.pi, 1j*cmath.pi, 2j*cmath.pi,
+    5+7j, -5+7j, 100, 100j,
+]
+
+
+# Test functions with both positive and negative arguments
+for function in (cmath.exp, cmath.sin, cmath.cos, cmath.tan):
+  for testarg in testargs:
+    function(testarg)
+    function(-testarg)
+

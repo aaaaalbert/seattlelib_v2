@@ -1,0 +1,89 @@
+"""
+<Program Name>
+  cmath.r2py
+
+<Purpose>
+  A partial RepyV2 reimplementation of Python's `cmath` module
+"""
+
+# Useful constants
+e = 2.7182818284590451   # Euler's constant
+pi = 3.1415926535897932  # Ludolphine number
+
+
+def exp(x):
+  """
+  <Purpose>
+    Function wrapper for the exponentiation of e, as often seen and used.
+
+  <Argument>
+    A float or complex number by which to exponentiate e.
+
+  <Exceptions>
+    TypeError for non-numeric arguments, see Python's math/cmath.
+
+  <Returns>
+    A complex number.
+  """
+  if type(x) not in (int, float, complex):
+    # This is `cmath`'s error message, it still supports complex args though!
+    raise TypeError("a float is required")
+
+  return complex(e**x)
+
+
+
+def sin(x):
+  """
+  <Purpose>
+    Return the complex sine of the argument (measured in radians).
+
+  <Argument>
+    The desired angle, possibly complex, in radians.
+
+  <Exceptions>
+    See `exp`.
+
+  <Returns>
+    A complex number.
+  """
+  return (exp(x*1j) - exp(-x*1j)) / 2j
+
+
+
+def cos(x):
+  """
+  <Purpose>
+    Return the complex cosine of the argument (measured in radians).
+
+  <Argument>
+    The desired angle, possibly complex, in radians.
+
+  <Exceptions>
+    See `exp`.
+
+  <Returns>
+    A complex number.
+  """
+  return (exp(x*1j) + exp(-x*1j)) / 2
+
+
+
+def tan(x):
+  """
+  <Purpose>
+    Return the complex tangent of the argument (measured in radians).
+
+  <Argument>
+    The desired angle, possibly complex, in radians.
+
+  <Exceptions>
+    See `exp`.
+
+  <Returns>
+    A complex number.
+  """
+  return sin(x) / cos(x)
+
+
+
