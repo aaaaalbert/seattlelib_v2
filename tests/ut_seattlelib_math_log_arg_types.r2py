@@ -1,0 +1,21 @@
+"""
+Verify that Repy's `math.log` raises errors for invalid argument types.
+"""
+#pragma repy restrictions.default dylink.r2py
+
+math = dy_import_module("math.r2py")
+
+testargs = [
+  ((1+1j,), "complex X"),
+  ((5, 1+1j), "complex base"),
+  ((7, 2, 1e-10+2j), "complex epsilon"),
+]
+
+for args, description in testargs:
+  try:
+    log(math.math_log(*args))
+  except TypeError, e:
+    pass
+  else:
+    log("Error: math_log executed with wrong function type,", description, "\n")
+
