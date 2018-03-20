@@ -1,7 +1,7 @@
 """
 Test RepyV2's `cmath`'s functions
 """
-#repy restrictions.default dylink.r2py
+#pragma repy restrictions.default dylink.r2py
 
 cmath = dy_import_module("cmath.r2py")
 
