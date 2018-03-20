@@ -46,7 +46,7 @@ matrix:
       install:
         sudo add-apt-repository "ppa:fkrull/deadsnakes" -y;
         sudo apt-get update;
-        sudo apt-get install python2.5 ;
+        sudo apt-get install python2.5 --allow-unauthenticated;
         wget https://raw.githubusercontent.com/pypa/setuptools/bootstrap-py24/ez_setup.py -O /tmp/ez_setup.py ;
         sudo $PythonBin /tmp/ez_setup.py ;
         sudo easy_install-2.5 pip==1.3.1 ;
